@@ -23,10 +23,10 @@ TENANTS=["tenanta", "tenantb"]
 s3=boto3.client("s3")
 for t in TENANTS:
     if t == "tenanta": 
-        DATAFILE = "2models_human_eva.1.csv"
+        DATAFILE = "2models_human_eva.csv"
        
     elif t == "tenantb":
-        DATAFILE = "2models_human_eva.1.csv"
+        DATAFILE = "2models_human_eva.csv"
        
     loader = CSVLoader(f"./{LOCAL_RAG_DIR}/{DATAFILE}")
     documents_aws = loader.load()
