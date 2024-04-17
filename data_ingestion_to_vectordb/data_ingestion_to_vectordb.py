@@ -3,7 +3,6 @@ import boto3
 import botocore
 
 from langchain.document_loaders import CSVLoader
-from langchain_community.document_loaders import S3FileLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 from langchain.embeddings import BedrockEmbeddings
@@ -23,18 +22,14 @@ br_embeddings = BedrockEmbeddings(client=boto3_bedrock, model_id=embeddings_mode
 TENANTS=["tenanta", "tenantb"]
 s3=boto3.client("s3")
 for t in TENANTS:
-    if t == "tenanta":
-        # DATAFILE="Amazon_SageMaker_FAQs.csv"
-        # DATAFILE="2models_human_eva.csv"
+    if t == "tenanta": 
         DATAFILE = "2models_human_eva.1.csv"
-        loader = S3FileLoader("rag-output-tenanta",DATAFILE )
-        documents_aws = loader.load()
+       
     elif t == "tenantb":
-        loader = S3FileLoader("rag-output-tenantb", "output.csv")
-        documents_aws = loader.load()
-
-    # loader = CSVLoader(f"./{LOCAL_RAG_DIR}/{DATAFILE}")
-    # documents_aws = loader.load()
+        DATAFILE = "2models_human_eva.1.csv"
+       
+    loader = CSVLoader(f"./{LOCAL_RAG_DIR}/{DATAFILE}")
+    documents_aws = loader.load()
     print(f"documents:loaded:size={len(documents_aws)}")
     
     docs = CharacterTextSplitter(chunk_size=2000, chunk_overlap=400, separator=",").split_documents(documents_aws)
