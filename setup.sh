@@ -21,7 +21,7 @@ then
   exit
 fi
 
-export EKS_CLUSTER_NAME="multitenant-rag-llm-Evaluator"
+export EKS_CLUSTER_NAME="llm-evaluator"
 
 if [ "x${EKS_CLUSTER_NAME}" == "x" ]
 then
@@ -65,16 +65,11 @@ PATH=/usr/local/bin:$PATH
 /usr/local/bin/aws --version
 rm -rf aws awscliv2.zip
 
-CLOUD9_EC2_ROLE="Cloud9AdminRole"
+
 
 AWS=$(which aws)
 
-echo "---------------------------"
-${AWS} sts get-caller-identity --query Arn | \
-  grep ${CLOUD9_EC2_ROLE} -q && echo "IAM role valid. You can continue setting up the EKS Cluster." || \
-  echo "IAM role NOT valid. Do not proceed with creating the EKS Cluster or you won't be able to authenticate.
-  Ensure you assigned the role to your EC2 instance as detailed in the README.md"
-echo "---------------------------"
+
 
 export AWS_REGION=$(curl --silent --no-progress-meter \
                     http://169.254.169.254/latest/dynamic/instance-identity/document \
@@ -156,24 +151,23 @@ do
   #modify
   echo "Creating rag and eva S3 Bucket for ${t}"
   # aws s3 mb s3://model-eva-input-${t}
-  aws s3 mb s3://model-eva-output-${t}
-  aws s3 mb s3://rag-input-${t}
-  aws s3 mb s3://rag-output-${t}
-  aws s3api put-object --bucket rag-input-${t} --key build-knowledge-base/
-  aws s3api put-object --bucket rag-input-${t} --key input_qa/
-  aws s3api put-object --bucket rag-input-${t} --key llm_options/
+  aws s3 mb s3://model-eva-output-${t}-${RANDOM_STRING}
+  aws s3 mb s3://rag-input-${t}-${RANDOM_STRING}
+  aws s3 mb s3://rag-output-${t}-${RANDOM_STRING}
+  aws s3api put-object --bucket rag-input-${t}-${RANDOM_STRING} --key build-knowledge-base/
+  aws s3api put-object --bucket rag-input-${t}-${RANDOM_STRING} --key input_qa/
+  aws s3api put-object --bucket rag-input-${t}-${RANDOM_STRING} --key llm_options/
   # aws s3api put-object --bucket model-eva-input-${t} --key input/
   # aws s3api put-object --bucket model-eva-input-${t} --key llm_options/
   
   echo "S3 access policy for ${t}rag_and_model_eva"
   envsubst < iam/s3-rag_and_model_eva-access-policy.json | \
   xargs -0 -I {} aws iam create-policy \
-                --policy-name s3-rag_and_model_eva-${t} \
+                --policy-name s3-rag_and_model_eva-${t}-${RANDOM_STRING} \
                 --policy-document {}
   #/modify
   
   
-  #以下这部分代码集成到前端上传文件那一部分
   if [ "${t}" == "tenanta" ]
   then
       aws s3 cp data/Amazon_SageMaker_FAQs.csv s3://contextual-data-${t}-${RANDOM_STRING}
