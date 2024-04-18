@@ -73,7 +73,8 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   --set serviceAccount.create=false \
   --set region=${AWS_REGION} \
   --set vpcId=${VPC_ID} \
-  --set serviceAccount.name=aws-load-balancer-controller
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --debug > install.log 2>&1
 
 kubectl -n kube-system rollout status deployment aws-load-balancer-controller
 
@@ -127,9 +128,8 @@ do
   aws iam attach-role-policy \
       --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/dynamodb-access-policy-${t}-${RANDOM_STRING} \
       --role-name ${CHATBOT_ACCESS_ROLE}
-      
+  echo "S3 access policy for ${t}rag_and_model_eva"
   aws iam attach-role-policy \
-      --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/s3-rag_and_model_eva-${t} \
-      --role-name ${CHATBOT_ACCESS_ROLE}   
-  
+      --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/s3-rag_and_model_eva-${t}-${RANDOM_STRING} \
+      --role-name ${CHATBOT_ACCESS_ROLE}
 done
