@@ -24,12 +24,6 @@ spec:
       labels:
         workload-tier: frontend
         app: chatbot
-      annotations:
-        # Istio specific annotations for readiness probe customization
-        readiness.status.sidecar.istio.io/applicationPorts: "8501"
-        readiness.status.sidecar.istio.io/initialDelaySeconds: "10"  # Adjust this value as needed
-        readiness.status.sidecar.istio.io/periodSeconds: "10"
-        readiness.status.sidecar.istio.io/failureThreshold: "3"
     spec:
       serviceAccountName: ${SA_NAME]
       containers:
