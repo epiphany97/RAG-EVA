@@ -15,7 +15,6 @@
             ],
             "Resource":[
                 "arn:aws:s3:::model-eva-output-${TENANT}/*",
-                // "arn:aws:s3:::model-eva-input-${TENANT}/*",
                 "arn:aws:s3:::rag-input-${TENANT}/*",
                 "arn:aws:s3:::rag-output-${TENANT}/*"
             ]
