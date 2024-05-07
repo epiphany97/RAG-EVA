@@ -25,7 +25,7 @@ spec:
         workload-tier: frontend
         app: chatbot
     spec:
-      serviceAccountName: ${SA_NAME]
+      serviceAccountName: ${SA_NAME}
       containers:
         - image: ${REPO_URI_CHATBOT}:latest
           imagePullPolicy: Always
@@ -47,6 +47,8 @@ spec:
             value: contextual-data-${TENANT}-${RANDOM_STRING}
           - name: CHATHISTORY_TABLE
             value: ${CHATHISTORY_TABLE}
+          - name: TEXT2TEXT_MODEL_ID
+            value: ${TEXT2TEXT_MODEL_ID}
           - name: EMBEDDING_MODEL_ID
             value: ${EMBEDDING_MODEL_ID}
           - name: BEDROCK_SERVICE
